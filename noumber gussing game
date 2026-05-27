@@ -1,0 +1,19 @@
+import random 
+computer=random.randint(1,101)
+you=-1
+gusses=0
+while(you!=computer):
+    you=int(input("please,gusse the noumber between 1 and 100:"))
+    if you<1 or you>100: 
+        print("Please enter a number between 1 and 100")
+    elif abs(you-computer)<=10:
+        if you>computer:
+            print("lower noumber pzz, you are too close")
+        else:
+            print("Higher noumber pzz,you are too close")
+    elif you>computer:
+        print("Lower noumber pzz")
+    elif you<computer:
+        print("Higher noumber pzz")
+    gusses+=1
+print(f"Congratulations you guessed the number in \"{gusses} gusses!\"\nAnd the real number is {computer}")

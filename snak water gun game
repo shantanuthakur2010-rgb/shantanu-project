@@ -1,0 +1,23 @@
+import random
+computer = random.choice([1, -1, 0])
+you=input("input your choice formo\nsanke:s\ngun:g\nwater:w\n:")
+dict1={"s":1,"g":0,"w":-1}
+dict2={1:"snake",0:"gun",-1:"water"}
+dict3={"s":"snake","g":"gun","w":"water"}
+mainchoice=dict1[you]
+print(f"you choose \" {dict3[you]}\" and computer choose \"{dict2[computer]}\"")
+if mainchoice==computer:
+    print("game is draw")
+else:
+    if mainchoice==1 and computer==-1:
+        print("you win")
+    elif mainchoice==1 and computer==0:
+        print("you lose")
+    elif mainchoice==0 and computer==-1:
+        print("you lose")
+    elif mainchoice==0 and computer==1:
+        print("you win")
+    elif mainchoice==-1 and computer==1:
+        print("you lose")
+    elif mainchoice==-1 and computer==0:
+        print("you win")

@@ -1,0 +1,86 @@
+import speech_recognition as sr
+import webbrowser
+import musiclibrary
+import edge_tts
+import asyncio
+import pygame
+from groq import Groq
+
+async def speak_async(text):
+    try:
+        pygame.mixer.music.stop()
+        pygame.mixer.quit()
+    except:
+        pass
+    communicate = edge_tts.Communicate(text, voice="en-IN-PrabhatNeural")
+    await communicate.save("response.mp3")
+    
+    pygame.mixer.init()
+    pygame.mixer.music.load("response.mp3")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+
+def speak(text):
+    asyncio.run(speak_async(text))
+def ai(commend):
+    client = Groq(api_key="api key")
+
+    response = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[
+    {"role": "system", "content": "You are Jarvis, a virtual assistant just like Alexa. Reply in short, clear and helpful answers. Be polite and friendly."},
+    {"role": "user", "content": commend}
+]
+    )
+
+    return response.choices[0].message.content
+
+def processcommand(c):
+    a = "C:/Program Files/Google/Chrome/Application/chrome.exe %s"
+    if "open google" in c.lower():
+        webbrowser.get(a).open("https://www.google.com")
+    elif "open facebook" in c.lower():
+        webbrowser.get(a).open("https://www.facebook.com")
+    elif "open pw" in c.lower():
+        webbrowser.get(a).open("https://www.pw.live")
+    elif "open youtube" in c.lower():
+        webbrowser.get(a).open("https://www.youtube.com/")
+    elif "open chatgpt" in c.lower():
+        webbrowser.get(a).open("https://chatgpt.com")
+    elif c.lower().startswith("play"):
+        song= c.lower().split(" ")[1]
+        li= musiclibrary.m[song]
+        if li:
+            webbrowser.open(li)
+        else:
+            print(f"the song {song} given by you is not found")
+    else:
+        output = ai(c)
+        speak(output)
+
+if __name__ == "__main__":
+    speak("Yes shantanu sir, mee Aap ki kya madad kar sakta hoon?")
+r = sr.Recognizer()
+while True:
+        try:
+            with sr.Microphone() as source:
+                print("Boliye...")
+                audio = r.listen(source, timeout=2, phrase_time_limit=1)
+
+            word = r.recognize_google(audio)
+            if "jarvis" in word.lower():
+                speak("yaa") 
+                print("Jarvis activated!")
+
+                with sr.Microphone() as source:
+                    print("listening for command...")
+                    audio = r.listen(source, timeout=5, phrase_time_limit=5)  
+                    command = r.recognize_google(audio)
+                    processcommand(command)
+            else:
+                print("Wake word not detected")
+        except sr.WaitTimeoutError:
+            print("Listening timed out, no speech detected")
+        except Exception as e:
+            print(f"Error: {e}")
